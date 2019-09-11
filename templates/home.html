@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My-Moby</title>
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
     {% for post in posts%}
         <h1>{{post.title}}</h1>
         <p>By {{post.author}}</p>
         <p>on {{post.date}}</p>
         <p>{{post.content}}</p>
     {% endfor %}
-</body>
-</html>
+{% endblock content%}
+

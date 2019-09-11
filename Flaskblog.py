@@ -16,6 +16,8 @@ posts = [
         }
          ]
 
+about_title= 'about'
+
 @app.route('/')
 @app.route('/home')
 def hello_world():
@@ -23,7 +25,7 @@ def hello_world():
 
 @app.route('/about')
 def about_page():
-    return render_template('about.html')
+    return render_template('about.html', title=about_title)
 
 if __name__ == "__main__":
     app.run(debug=True)
