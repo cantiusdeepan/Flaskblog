@@ -131,3 +131,6 @@ dmypy.json
 .idea/misc.xml
 .idea/modules.xml
 .idea/vcs.xml
+.idea/codeStyles/Project.xml
+.idea/dbnavigator.xml
+.idea/libraries/R_User_Library.xml
