@@ -6,7 +6,7 @@ from flask_login import login_user, current_user, logout_user, login_required
 
 from flaskblog import app, db, bcrypt
 from flaskblog.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                             PostForm)
+                             PostForm, RequestResetForm, ResetPasswordForm)
 from flaskblog.models import User, Post
 
 
@@ -14,7 +14,9 @@ from flaskblog.models import User, Post
 @app.route("/home")
 @login_required
 def home():
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type=int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page=page,
+                                                                  per_page=5)
     return render_template('home.html', posts=posts)
 
 
@@ -117,7 +119,7 @@ def new_post():
         flash(f'Post has been created', 'success')
         return redirect(url_for('home'))
     return render_template('post_handler.html', title='New Post', form=form
-        , legend = "New Post")
+                           , legend="New Post")
 
 
 @app.route("/post/<int:post_id>")
@@ -138,12 +140,12 @@ def update_post(post_id):
         post.content = form.content.data
         db.session.commit()
         flash(f'Your post has been updated', 'success')
-        return redirect(url_for('post',post_id=post.id))
+        return redirect(url_for('post', post_id=post.id))
     elif request.method == 'GET':
-        form.title.data= post.title
+        form.title.data = post.title
         form.content.data = post.content
     return render_template('post_handler.html', title="Update Post",
-                           form=form, legend = "Update Post")
+                           form=form, legend="Update Post")
 
 
 @app.route("/post/<int:post_id>/delete", methods=['POST'])
@@ -156,3 +158,22 @@ def delete_post(post_id):
     db.session.commit()
     flash(f'Your post has been deleted!', 'success')
     return redirect(url_for('home'))
+
+
+@app.route("/user/<string:username>")
+@login_required
+def user_posts(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user) \
+        .order_by(Post.date_posted.desc()) \
+        .paginate(page=page, per_page=5)
+    return render_template('user_posts.html', posts=posts, user=user)
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if  current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    return render_template('rest_requests.html', title = 'Reset Password' ,
+                           form=form)
