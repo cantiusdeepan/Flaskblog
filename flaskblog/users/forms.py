@@ -1,8 +1,9 @@
 from flask_login import current_user
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
-from wtforms.validators import (DataRequired, Length, Email, EqualTo,
+from flask_wtf.file import FileAllowed
+from wtforms import (StringField, PasswordField, SubmitField, BooleanField,
+                     FileField)
+from wtforms.validators import (Email, DataRequired, Length, EqualTo,
                                 ValidationError)
 
 from flaskblog.models import User
@@ -59,10 +60,6 @@ class UpdateAccountForm(FlaskForm):
                 raise ValidationError('That email is taken! Please use '
                                       'another email id!!')
 
-class PostForm(FlaskForm):
-    title = StringField('Title',validators=[DataRequired()])
-    content = TextAreaField('Content', validators=[DataRequired()])
-    submit = SubmitField('Post')
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
@@ -73,6 +70,7 @@ class RequestResetForm(FlaskForm):
         if user is None:
             raise ValidationError('There is no account with that email! You '
                                   'must register first.')
+
 
 class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[(DataRequired())])
